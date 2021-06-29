@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <p id="col">hello world</p>
+        <button @click="btn">btn</button>
+        <modal v-if="showModal" @fruit-btn="btn2" :users="name" :sel.sync="selected" :test="options"></modal>
+    </div>
+</body>
+<script src="vue.js"></script>
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+<script>
+
+
+
+    Vue.component("modal", {
+        template: `
+    <div>
+    <div v-for="u in users">
+    <p>{{u}}</p>
+    </div>
+    <button @click="send">post</button>
+    <multiselect
+    v-model="innerVal"
+    :options="test"
+    :multiple="true"
+    :close-on-select="true"
+    placeholder="select participants">
+  </multiselect>
+    </div>
+    `,
+        props: {
+            users: Array,
+            sel: null,
+            test: Array
+        },
+        data:
+            function () {
+                return {
+                    fruit: "grape"
+                }
+            },
+        computed: {
+            innerVal: {
+                get(){
+                    return this.sel
+                },
+                set(sel){
+                    this.$emit("update:sel", sel)
+                }
+            }
+        },
+        methods: {
+            send() {
+                this.$emit("fruit-btn", this.fruit)
+            }
+        }
+    })
+
+    Vue.component('multiselect', window.VueMultiselect.default)
+
+    vm = new Vue({
+        el: "#app",
+        data: {
+            name: [],
+            showModal: false,
+            selected: null,
+            options: ['list', 'of', 'options']
+        },
+        methods: {
+            btn: function () {
+                this.showModal = true
+                for (var i = 0; i < 3; i++) {
+                    this.name.push("a")
+                }
+                document.getElementById("col").style.color = "blue";
+            },
+            btn2: function (fruit) {
+                console.log(this.selected)
+                this.options.push(fruit)
+            }
+        }
+    })
+
+
+</script>
+
+</html>
